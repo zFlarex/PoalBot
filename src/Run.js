@@ -9,7 +9,7 @@ fs.readFile('proxies.txt', 'utf8', (error, data) =>
 {
     if(!error)
     {
-        const proxiesArray = data.split('\n').replace('\r', '');
+        const proxiesArray = data.replace('\r', '').split('\n');
 
         for(var i = 0; i < proxiesArray.length; i++)
         {
