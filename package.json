@@ -1,0 +1,5 @@
+{
+	"name": "Poal-Client",
+	"version": "1.0.0",
+	"description": "An open-source client for \"poal.me\" written in Node.JS."
+}
