@@ -5,6 +5,8 @@ var fs = require('fs');
 var Logger = require('./Logger.js');
 var PoalClient = require('./PoalClient.js');
 
+Logger.Log('[PoalClient] - zFlarex', 'INFO');
+
 fs.readFile('proxies.txt', 'utf8', (error, data) =>
 {
     if(!error)
