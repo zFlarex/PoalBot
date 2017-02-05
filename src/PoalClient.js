@@ -1,4 +1,5 @@
 //Author: zFlarex <https://zflarex.pw>
+//Author: zFlarex <https://zflarex.pw>
 
 var request = require('request');
 var cheerio = require('cheerio');
@@ -34,9 +35,9 @@ class PoalClient
 
                 var postDictionary = {};
 
-        	postDictionary['c'] = 'v';
-        	postDictionary['id'] = pollId;
-        	postDictionary['ch'] = pollResults[voteOption]['index'];
+                postDictionary['c'] = 'v';
+                postDictionary['id'] = pollId;
+                postDictionary['ch'] = pollResults[voteOption]['index'];
                 postDictionary['xc'] = this._xcCookie;
 
                 request.post({ url: 'http://poal.me/a.php', proxy: this._proxyAddress, jar: this._cookieJar, form: postDictionary }, (error, response, body) =>
@@ -116,7 +117,14 @@ class PoalClient
         {
             if(!error && response.statusCode == 200)
             {
-                eval('this._handlePollResults(pollId, {' + this._stringInBetween(body, '{', '}') + '}, callback);');
+                try
+                {
+                    eval('this._handlePollResults(pollId, {' + this._stringInBetween(body, '{', '}') + '}, callback);');
+                }
+                catch (e)
+                {
+                    callback(true, {});
+                }
             }
             else
             {
@@ -131,26 +139,33 @@ class PoalClient
         {
             if(!error && response.statusCode == 200)
             {
-                var $ = cheerio.load(body);
-                var sjo = undefined;
-                var scriptBody = $('script[type="text/javascript"]')[2].children[0].data;
-
-                eval(scriptBody); // sjo is defined here.
-
-                this._calculateXCCookie(sjo);
-
-                var pollResults = {};
-                var po = eval('(function() { return {' + this._stringInBetween(scriptBody, '{', '}') + '} } )();');
-
-                for(var i = 1; i <= po.c; i++)
+                try
                 {
-                    pollResults[po['a' + i]] = {
-                        'index': i,
-                        'votes': resultDictionary['t' + i] == undefined ? 0 : resultDictionary['t' + i]
-                    };
-                }
+                    var $ = cheerio.load(body);
+                    var sjo = undefined;
+                    var scriptBody = $('script[type="text/javascript"]')[2].children[0].data;
 
-                callback(false, pollResults);
+                    eval(scriptBody); // sjo is defined here.
+
+                    this._calculateXCCookie(sjo);
+
+                    var pollResults = {};
+                    var po = eval('(function() { return {' + this._stringInBetween(scriptBody, '{', '}') + '} } )();');
+
+                    for(var i = 1; i <= po.c; i++)
+                    {
+                        pollResults[po['a' + i]] = {
+                            'index': i,
+                            'votes': resultDictionary['t' + i] == undefined ? 0 : resultDictionary['t' + i]
+                        };
+                    }
+
+                    callback(false, pollResults);
+                }
+                catch (e)
+                {
+                    callback(true, {});
+                }
             }
             else
             {
