@@ -1,5 +1,4 @@
 //Author: zFlarex <https://zflarex.pw>
-//Author: zFlarex <https://zflarex.pw>
 
 var request = require('request');
 var cheerio = require('cheerio');
